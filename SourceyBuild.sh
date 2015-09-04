@@ -2,7 +2,7 @@
 #SOURCEY_VERBOSE=1
 
 # if you want to force sourcey to rebuild everything
-#SOURCEY_REBUILD=1
+SOURCEY_REBUILD=1
 
 # the old version of perl works for this app may need
 # to build a later one as it gets more fancy

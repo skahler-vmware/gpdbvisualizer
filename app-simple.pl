@@ -31,7 +31,7 @@ __DATA__
 <div>
 Submit your query 
 %= form_for querysubmit => (method => 'POST') => begin
-  <textarea name="query" class="hint" cols=120 rows=20>
+  <textarea name="query" cols=120 rows=20>
                                                 QUERY PLAN
  ----------------------------------------------------------------------------------------------------------
 Limit  (cost=152119451.35..152119453.60 rows=100 width=498)
@@ -144,10 +144,10 @@ var root = <%== $json_text %>;
 
 var i = 0,
   duration = 750,
-  rectW = 140,
-  rectH = 80;
+  rectW = 180,
+  rectH = 120;
 
-var tree = d3.layout.tree().nodeSize([160, 100]);
+var tree = d3.layout.tree().nodeSize([200, 140]);
 var diagonal = d3.svg.diagonal()
   .projection(function(d) {
     return [d.x + rectW / 2, d.y + rectH / 2];
@@ -184,7 +184,7 @@ function update(source) {
 
   // Normalize for fixed-depth.
   nodes.forEach(function(d) {
-    d.y = d.depth * 120;
+    d.y = d.depth * 160;
   });
 
   // Update the nodes…
@@ -221,6 +221,16 @@ function update(source) {
       return d.type;
     });
 
+    nodeEnter.append("text")
+    .attr("x", rectW / 2)
+    .attr("y", rectH / 2 + 15)
+    .attr("dy", ".35em")
+    .attr("text-anchor", "middle")
+    .attr("font-size", 14)
+    .text(function(d) {
+      return "Cost: " + d.estimated_total_cost;
+    });
+
   nodeEnter.append("text")
     .attr("x", 5)
     .attr("y", 5)
@@ -237,7 +247,9 @@ function update(source) {
     .attr("y", 5)
     .attr("dy", "1em")
     .attr("text-anchor", "middle")
-    .attr("font-size", 10)
+    .attr("font-size", 12)
+    .attr("font-weight", "bold")
+    .attr("fill", "blue")
     .text(function(d) {
       return d.table_name ? d.table_name : "";
     });
@@ -248,6 +260,16 @@ function update(source) {
     .attr("dy", "1em")
     .attr("font-size", 10)
     .text( function(d) { return d.filter ? "Filter: " + d.filter : ""; } )
+    /* .call(wrap, 300) */
+    .attr("text-anchor", "middle")
+    ;
+
+  nodeEnter.append("text")
+    .attr("x", rectW / 2)
+    .attr("y", -15)
+    .attr("dy", "1em")
+    .attr("font-size", 10)
+    .text( function(d) { return d.group_by ? "Filter: " + d.group_by : ""; } )
     /* .call(wrap, 300) */
     .attr("text-anchor", "middle")
     ;
@@ -282,11 +304,41 @@ function update(source) {
       return d.merge_key ? "Merge Key: " + d.merge_key : "";
     });
 
+    nodeEnter.append("text")
+    .attr("x", rectW - 5 )
+    .attr("y", rectH - 25 )
+    .attr("dy", "1em")
+    .attr("text-anchor", "end")
+    .attr("font-size", 10)
+    .text(function(d) {
+      return ( d.source_segments ? d.source_segments + "->" : "" ) + ( d.destination_segments ? d.destination_segments : "" );
+    });
+
+    nodeEnter.append("text")
+    .attr("x", rectW - 5 )
+    .attr("y", rectH - 15 )
+    .attr("dy", "1em")
+    .attr("text-anchor", "end")
+    .attr("font-size", 10)
+    .text(function(d) {
+      return ( d.rows_out_workers ? "Workers: " + d.rows_out_workers : "" ) + ( d.rows_in_workers ? "Workers: " + d.rows_in_workers : "" );
+    });
+
   nodeEnter.append("text")
     .attr("x", 5)
     .attr("y", rectH - 25)
     .attr("dy", "1em")
-    .attr("text-anchor", "Left")
+    .attr("text-anchor", "start")
+    .attr("font-size", 10)
+    .text(function(d) {
+      return d.rows_out_count ? "Rows: " + d.rows_out_count : "";
+    });
+
+  nodeEnter.append("text")
+    .attr("x", 5)
+    .attr("y", rectH - 35)
+    .attr("dy", "1em")
+    .attr("text-anchor", "start")
     .attr("font-size", 10)
     .text(function(d) {
       return d.rows_out_avg_rows ? "Avg Rows: " + d.rows_out_avg_rows : "";
@@ -294,12 +346,42 @@ function update(source) {
 
   nodeEnter.append("text")
     .attr("x", 5)
-    .attr("y", rectH - 15)
+    .attr("y", rectH - 25)
     .attr("dy", "1em")
-    .attr("text-anchor", "Left")
+    .attr("text-anchor", "start")
     .attr("font-size", 10)
     .text(function(d) {
-      return d.rows_out_max_rows ? "Max Rows: " + d.rows_out_max_rows : "";
+      return d.rows_out_max_rows ? "Max Rows: " + d.rows_out_max_rows + " (" + d.rows_out_max_rows_segment + ")" : "";
+    });
+
+  nodeEnter.append("text")
+    .attr("x", 5)
+    .attr("y", rectH - 35)
+    .attr("dy", "1em")
+    .attr("text-anchor", "start")
+    .attr("font-size", 10)
+    .text(function(d) {
+      return d.rows_in_avg_rows ? "Avg Rows: " + d.rows_in_avg_rows : "";
+    });
+
+  nodeEnter.append("text")
+    .attr("x", 5)
+    .attr("y", rectH - 25)
+    .attr("dy", "1em")
+    .attr("text-anchor", "start")
+    .attr("font-size", 10)
+    .text(function(d) {
+      return d.rows_in_max_rows ? "Max Rows: " + d.rows_in_max_rows + " (" + d.rows_in_max_rows_segment + ")" : "";
+    });
+
+  nodeEnter.append("text")
+    .attr("x", 5)
+    .attr("y", rectH - 15)
+    .attr("dy", "1em")
+    .attr("text-anchor", "start")
+    .attr("font-size", 10)
+    .text(function(d) {
+      return d.estimated_rows ? "Est Rows: " + d.estimated_rows : "";
     });
 
   nodeEnter.append("text")

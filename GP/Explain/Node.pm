@@ -253,7 +253,7 @@ sub new {
     croak( 'estimated_total_cost has to be passed to constructor of explain node' )   unless defined $self->estimated_total_cost;
     croak( 'type has to be passed to constructor of explain node' )                   unless defined $self->type;
 
-    if ( $self->type =~ m{ \A ( Seq \s Scan | Bitmap \s+ Heap \s+ Scan | Append-only \s+ Scan | Foreign \s+ Scan | Update | Insert | Delete ) \s on \s (\S+) (?: \s+ (\S+) ) ? \z }xms ) {
+    if ( $self->type =~ m{ \A ( Seq \s Scan | Bitmap \s+ Heap \s+ Scan | Append-only \s+ Scan | Append-only \s+ Columnar \s+ Scan | Foreign \s+ Scan | Update | Insert | Delete ) \s on \s (\S+) (?: \s+ (\S+) ) ? \z }xms ) {
         $self->type( $1 );
         $self->table_name( $2 );
         $self->table_alias( $3 ) if defined $3;
