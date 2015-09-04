@@ -19,3 +19,5 @@ Thanks
 explain.depesz.com - Inspiration for much of this, over time ideally this will grow be as useful for GPDB as that is for Postgres
 codepen.io - essential help for js hacking
 bl.ocks.org/mbostock - all things D3 related
+github.com/oetiker/sourcey-buildpack - Yay for perl buildpacks
+mojolicio.us - Yay good perl stuffs
